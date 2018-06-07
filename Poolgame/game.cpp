@@ -112,6 +112,7 @@ void Game::animate(double dt) {
                 }
             }
         }
+
         // we marked this ball as deleted, so skip
         if (*it == nullptr) continue;
 
@@ -120,6 +121,7 @@ void Game::animate(double dt) {
         // apply friction
         ballA->changeVelocity(-ballA->getVelocity() * m_table->getFriction() * dt);
     }
+
 
     // clean up them trash-balls
     for (Ball* b : toBeRemoved) {
@@ -130,6 +132,8 @@ void Game::animate(double dt) {
     for (Ball* b: toBeAdded) m_balls->push_back(b);
 
     updateShake(dt);
+    //use magnets to exclude the cue ball
+    m_table->exclude(m_balls->front());
 }
 
 void Game::updateShake(double dt) {
@@ -208,12 +212,13 @@ std::pair<QVector2D, QVector2D> Game::resolveCollision(Ball* ballA, Ball* ballB)
     ballA->changeVelocity(mr * (pb - root) * collisionVector);
     ballB->changeVelocity((root-pb) * collisionVector);
 
+
     // return the change in velocities for the two balls
     return std::make_pair(ballA->getVelocity() - ballAStartingVelocity, ballB->getVelocity() - ballBStartingVelocity);
 }
 
+//clear all the balls and replace them with memento
 void Game::load(std::vector<Ball*> balls){
-    qDebug()<<"Load Memento!";
     m_balls->clear();
     for(auto b : balls){
         m_balls->push_back(b);
@@ -224,8 +229,8 @@ void Game::load(std::vector<Ball*> balls){
     this->addMouseFunctions(cb->getEvents());
 }
 
+//get a copy of each ball and store them to a new memento
 Memento* Game::save(){
-    qDebug()<<"Save Memento!";
     Memento* memento = new Memento();
     for(auto it = m_balls->begin(); it != m_balls->end(); ++it){
         Ball* ball = *it;
@@ -234,6 +239,7 @@ Memento* Game::save(){
     return memento;
 }
 
+//determine whether the game should enter flash light mode
 void Game::flashLightMode(){
     if(m_flashlight){
         m_flashlight = false;

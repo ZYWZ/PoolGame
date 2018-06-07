@@ -28,6 +28,7 @@ Dialog::Dialog(Game *game, std::string stageFlag, QWidget* parent) :
 
     // set the window size to be at least the table size
     this->resize(game->getMinimumWidth(), game->getMinimumHeight());
+    // save the original state of the game when it starts
     m_memento = m_game->save();
     m_cueBallColor = m_game->getBalls()->front()->getColor();
 }
@@ -51,6 +52,7 @@ void Dialog::nextAnim() {
 void Dialog::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
+    // save the game when the cue ball has stoped
     if(m_stageFlag == "StageThree"){
         m_cueBallColor2 = m_game->getBalls()->front()->getColor();
 
@@ -70,20 +72,13 @@ void Dialog::paintEvent(QPaintEvent *)
 }
 
 void Dialog::keyPressEvent(QKeyEvent *event){
+    //press R to load the last step, press F to enter flash light mode
     if(m_stageFlag == "StageThree"){
         switch (event->key()){
             case Qt::Key_R:
                 m_game->load(m_memento->getBalls());
                 m_memento = m_game->save();
-                break;
-            case Qt::Key_T:
-                if(!m_saveFlag){
-                    if(m_game->cueBallStop()){
-                        m_memento = m_game->save();
-                        m_saveFlag = true;
-                    }
-                }
-                break;
+            break;
             case Qt::Key_F:
                 m_game->flashLightMode();
                 break;

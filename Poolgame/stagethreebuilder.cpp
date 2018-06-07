@@ -1,4 +1,4 @@
-#include "stagetwobuilder.h"
+#include "stagethreebuilder.h"
 #include "utils.h"
 #include <iostream>
 #include <QJsonArray>
@@ -6,7 +6,7 @@
 #include <functional>
 #include "ball.h"
 
-QJsonObject StageTwoBuilder::addDefaultsToBall(QJsonObject bData, const char* defaultColour) {
+QJsonObject StageThreeBuilder::addDefaultsToBall(QJsonObject bData, const char* defaultColour) {
 
     // default colour is white
     if (!bData.contains("colour")) {
@@ -86,20 +86,20 @@ QJsonObject StageTwoBuilder::addDefaultsToBall(QJsonObject bData, const char* de
     return bData;
 }
 
-bool StageTwoBuilder::isValidPocket(double xpos, double ypos, double radius, double tableWidth, double tableHeight) {
+bool StageThreeBuilder::isValidPocket(double xpos, double ypos, double radius, double tableWidth, double tableHeight) {
     if (xpos == DOUBLEINF || ypos == DOUBLEINF || radius == DOUBLEINF) return false;
     bool isWithinXBounds = xpos > -radius && xpos < tableWidth + radius;
     bool isWithinYBounds = ypos > -radius && ypos < tableHeight + radius;
     return isWithinXBounds && isWithinYBounds;
 }
 
-bool StageTwoBuilder::isValidColour(const QString& col) {
+bool StageThreeBuilder::isValidColour(const QString& col) {
     // construct a QColour, if its not valid by Qt standards, return false
     QColor c(col);
     return c.isValid();
 }
 
-QJsonObject StageTwoBuilder::convertToValidTable(QJsonObject in) {
+QJsonObject StageThreeBuilder::convertToValidTable(QJsonObject in) {
     // default table is 600x300
     auto defaultSize = QJsonObject({{"x",600.0},{"y",300.0}});
 
@@ -136,7 +136,7 @@ QJsonObject StageTwoBuilder::convertToValidTable(QJsonObject in) {
     return in;
 }
 
-void StageTwoBuilder::addBall(QJsonObject &ballData) {
+void StageThreeBuilder::addBall(QJsonObject &ballData) {
 
     // if we haven't already started building
     if (m_buildingBalls == nullptr) {
@@ -203,13 +203,13 @@ void StageTwoBuilder::addBall(QJsonObject &ballData) {
     m_buildingBalls->push_back(b);
 }
 
-void StageTwoBuilder::addTable(QJsonObject &tableDatax) {
+void StageThreeBuilder::addTable(QJsonObject &tableDatax) {
     // ensure that we haven't already created another table
     if (m_buildingTable != nullptr) throw std::invalid_argument("table created twice");
 
     // make the json supplied compliant (doesn't check pockets)
     QJsonObject cookedTableData = convertToValidTable(tableDatax);
-    StageTwoTable* t = static_cast<StageTwoTable*>(m_factory->makeTable(cookedTableData));
+    StageThreeTable* t = static_cast<StageThreeTable*>(m_factory->makeTable(cookedTableData));
 
     // if we need to make pockets
     if (tableDatax.contains("pockets")) {
@@ -221,12 +221,21 @@ void StageTwoBuilder::addTable(QJsonObject &tableDatax) {
 
             t->addPocket(m_factory->makePocket(pockieData));
         }
-    } 
+    }
+    //adding some fixed magnet to the table
+    Magnet *magnet1 = new Magnet(QVector2D(400,100),10.0);
+    Magnet *magnet2 = new Magnet(QVector2D(100,250),10.0);
+    Magnet *magnet3 = new Magnet(QVector2D(400,400),10.0);
+    Magnet *magnet4 = new Magnet(QVector2D(700,250),10.0);
+    t->addMagnet(magnet1);
+    t->addMagnet(magnet2);
+    t->addMagnet(magnet3);
+    t->addMagnet(magnet4);
 
     m_buildingTable = static_cast<Table*>(t);
 }
 
-Game* StageTwoBuilder::getResult() {
+Game* StageThreeBuilder::getResult() {
     // no table?
     if (m_buildingTable == nullptr) {
         // add a default table
@@ -271,7 +280,7 @@ Game* StageTwoBuilder::getResult() {
     return retGame;
 }
 
-bool StageTwoBuilder::ballWithinTable(const Ball *ball, const Table *table) {
+bool StageThreeBuilder::ballWithinTable(const Ball *ball, const Table *table) {
     QVector2D bPos = ball->getPosition();
     // ball is beyond left side of table's bounds
     if (bPos.x() - ball->getRadius() <= 0) {
@@ -292,7 +301,7 @@ bool StageTwoBuilder::ballWithinTable(const Ball *ball, const Table *table) {
     return true;
 }
 
-QJsonObject StageTwoBuilder::convertAndCheckBall(QJsonObject bData, const double parentRadius, const std::string &parentColour) {
+QJsonObject StageThreeBuilder::convertAndCheckBall(QJsonObject bData, const double parentRadius, const std::string &parentColour) {
     // update defaults (necessary to do first so that we can set default radii, and pos)
     bData = addDefaultsToBall(bData, parentColour.c_str());
 
@@ -309,7 +318,7 @@ QJsonObject StageTwoBuilder::convertAndCheckBall(QJsonObject bData, const double
     return bData;
 }
 
-QJsonObject StageTwoBuilder::convertAndCheckPocket(QJsonObject in, double tableWidth, double tableHeight) {
+QJsonObject StageThreeBuilder::convertAndCheckPocket(QJsonObject in, double tableWidth, double tableHeight) {
     // default radius = 15
     if (!in.contains("radius")) in["radius"] = 15.0;
     double radius = in.value("radius").toDouble(DOUBLEINF);

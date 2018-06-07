@@ -3,6 +3,7 @@
 #include "ball.h"
 #include "utils.h"
 #include "mouseeventable.h"
+#include <QSound>
 
 /**
  * @brief The BallDecorator class
@@ -29,7 +30,7 @@ public:
     virtual QVector2D getPosition() const override { return m_subBall->getPosition(); }
     virtual void setPosition(QVector2D p) override { m_subBall->setPosition(p); }
     virtual bool applyBreak(const QVector2D& q, std::vector<Ball*>& b) override { return m_subBall->applyBreak(q,b); }
-
+    //clone the current ball
     virtual Ball* copy() override {return m_subBall->copy();}
 };
 

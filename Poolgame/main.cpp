@@ -8,6 +8,7 @@
 #include "utils.h"
 #include "gamebuilder.h"
 #include "stagetwobuilder.h"
+#include "stagethreebuilder.h"
 #include <QApplication>
 #include <QFile>
 #include <iostream>
@@ -45,7 +46,7 @@ int main(int argc, char *argv[])
         stageFlag = "StageTwo";
     } else {
         // set and transfer ownership of this builder to the director
-        director.setBuilder(new StageTwoBuilder());
+        director.setBuilder(new StageThreeBuilder());
         stageFlag = "StageThree";
     }
 

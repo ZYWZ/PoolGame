@@ -1,4 +1,5 @@
 #include "balldecorator.h"
+#include "utils.h"
 
 
 void CueBall::render(QPainter &painter, const QVector2D &offset) {
@@ -53,6 +54,7 @@ void CueBall::mouseReleaseEvent(QMouseEvent* e) {
         isDragging = false;
         // update ball vel
         m_subBall->changeVelocity(resultingVel);
+        QSound::play(collideSound_path);
     }
 }
 

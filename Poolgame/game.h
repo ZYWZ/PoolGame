@@ -2,6 +2,7 @@
 #include <QJsonObject>
 #include <functional>
 #include <QMouseEvent>
+#include <QSound>
 
 #include "abstractstagefactory.h"
 
@@ -99,9 +100,28 @@ public:
      * @return event queue of event functions
      */
     MouseEventable::EventQueue& getEventFns() { return m_mouseEventFunctions; }
+
+    /**
+     * @brief load the balls stored in memento
+     * @param balls
+     */
     void load(std::vector<Ball*> balls);
+
+    /**
+     * @brief save all the cloned balls to a vector
+     * @return a memento which stores a vector of Ball*
+     */
     Memento* save();
+
+    /**
+     * @brief flashLightMode will render the light around the ball and leave the rest of the table to darkness
+     */
     void flashLightMode();
+
+    /**
+     * @brief check whether the cue ball has stoped
+     * @return yes or no
+     */
     bool cueBallStop(){
         bool flag = false;
         if(m_balls->front()->getVelocity().length() < 1){

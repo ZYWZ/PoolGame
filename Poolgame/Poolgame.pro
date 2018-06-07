@@ -34,7 +34,10 @@ SOURCES += \
     stagetwofactory.cpp \
     pocket.cpp \
     stagetwobuilder.cpp \
-    balldecorator.cpp
+    balldecorator.cpp \
+    stagethreefactory.cpp \
+    stagethreebuilder.cpp \
+    magnet.cpp
 
 HEADERS += \
         dialog.h \
@@ -50,7 +53,10 @@ HEADERS += \
     stagetwobuilder.h \
     balldecorator.h \
     mouseeventable.h \
-    memento.h
+    memento.h \
+    stagethreefactory.h \
+    stagethreebuilder.h \
+    magnet.h
 
 FORMS += \
         dialog.ui
@@ -65,3 +71,5 @@ copyconfig.commands = \
 
 first.depends = all copyconfig
 QMAKE_EXTRA_TARGETS += first copyconfig
+
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets multimedia

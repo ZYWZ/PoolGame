@@ -57,7 +57,7 @@ public:
     // whether the ball will break, and handle accordingly
     // for base ball, do nothing. insert into rhs if necessary
     virtual bool applyBreak(const QVector2D&, std::vector<Ball*>&) { return false; }
-
+    //clone the current ball
     virtual Ball* copy()=0;
 };
 
@@ -106,7 +106,7 @@ public:
         }
         return flag;
     }
-
+    //clone the current ball, applying the prototype design pattern
     Ball* copy() override{
         CompositeBall* ret = new CompositeBall(this->getColor(),this->getPosition(),this->getVelocity(),this->getMass(),this->getRadius(),this->getStrength());
         if(this->kids()){

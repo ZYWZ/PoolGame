@@ -4,6 +4,7 @@
 #include <QPainter>
 
 #include "pocket.h"
+#include "magnet.h"
 
 class Ball;
 
@@ -29,6 +30,7 @@ public:
     double getFriction() const { return m_friction; }
 
     virtual bool sinks(Ball*) { return false; }
+    virtual void exclude(Ball* ball){}
 };
 
 class StageOneTable : public Table
@@ -64,4 +66,34 @@ public:
 
     /* self explanatory */
     void addPocket(Pocket* p) { m_pockets.push_back(p); }
+};
+
+class StageThreeTable : public Table {
+protected:
+    std::vector<Pocket*> m_pockets;
+    std::vector<Magnet*> m_magnets;
+
+public:
+    StageThreeTable(int width, int height, QColor colour, double friction) :
+        Table(width, height, colour, friction) {}
+
+    ~StageThreeTable();
+
+    /**
+     * @brief render - draw the stageonetable to screen using the specified painter
+     * @param painter - painter to use
+     */
+    void render(QPainter &painter, const QVector2D& offset) override;
+
+    // sinky winky ball
+    virtual bool sinks(Ball* b) override;
+
+    /* self explanatory */
+    void addPocket(Pocket* p) { m_pockets.push_back(p); }
+
+    /* self explanatory */
+    void addMagnet(Magnet* m) { m_magnets.push_back(m); }
+
+    //the magnets will exclude the cue ball
+    virtual void exclude(Ball* ball) override;
 };
